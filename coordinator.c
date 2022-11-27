@@ -45,7 +45,7 @@ int first_come_first_serve_policy(task_t *ready_array, int ready_num, task_t *fi
     // idle if there are no ready tasks
     if (ready_num == 0)
     {
-        printf("< Time %d > Idle \n", clock);
+        printf("< Time %d > Idle\n", clock);
         return processes_completed;
     }
 
