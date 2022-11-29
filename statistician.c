@@ -26,6 +26,7 @@ void compute_statistics(statistics_t *stats, task_t *finished_tasks, int finishe
     int turnaround_time_sum = 0;
     int burst_time_sum = 0;
 
+    // calculate totals by iterating through finished tasks
     int i;
     for (i = 0; i < finished_tasks_num; i++)
     {
@@ -48,8 +49,11 @@ void compute_statistics(statistics_t *stats, task_t *finished_tasks, int finishe
         }
     }
 
+    // total idle time = when the last process finished - the total time used
+    // by all of the processes
     int idle_time = max_finish_time - burst_time_sum;
 
+    // compute averages and the cpu usage
     stats->avg_response_time = ((double)response_time_sum) / ((double)finished_tasks_num);
     stats->avg_waiting_time = ((double)waiting_time_sum) / ((double)finished_tasks_num);
     stats->avg_turnaround_time = ((double)turnaround_time_sum) / ((double)finished_tasks_num);

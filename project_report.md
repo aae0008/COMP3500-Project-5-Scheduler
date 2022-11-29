@@ -8,7 +8,7 @@ runs, the scheduling mechanism calls the function corresponding to the schedulin
 policy that the user provides.
 
 2. How did implement the three scheduling algorithms?
-    * I learned how to create the basic structure of each scheduling from the lecture
+    * I learned how to create the basic structure of each scheduling policy from the lecture
 material in class. By incrementally developing and testing the scheduling policies 
 with the VSCode debugger, I managed to successfully implement each algorithm.
 The first policy I implemented was the First Come First Serve policy. It works
@@ -37,7 +37,7 @@ turnaround_time = finish_time - arrival_time
 6. How did you implement the command-line parser?
     * I used the sample code provided in the instructions as a baseline for my 
 command-line parser. The command-line parser is implemented inside of my main
-function. The main function makes sure that there are between 2 and 3 command-line,
+function. The main function makes sure that there are between 2 and 3 command-line
 arguments, it confirms that the file can be read, and it confirms that a valid
 scheduling policy got chosen.
 
@@ -83,4 +83,25 @@ scheduling policy got chosen.
 
 ## 7.3 Miscellaneous factors
 
-4. Is your code elegant? 
+1. Is your code elegant?
+    * Among many things, elegant code uses meaningful, descriptive variable names, 
+    uses uninitialized variables sparingly, avoids large, complex functions, 
+    and includes comments about the programmer's intentions. Overall my code is
+    elegant. I use meaningful variable names throughout my code. Two instances
+    are when I use `policy_name` to represent the policy passed in and 
+    `processes_completed` to represent the number of processes that a policy 
+    completes in one step. All of my code has inline and block comments. And, 
+    I don't have functions that are unecessarily large.
+
+2. How innovative is your solution? Did you try any ideas not suggested here?
+    * My solution is reasonably innovative. The way I calculated the statistics
+    (avg response time, avg turnaround time, avg waiting time, and cpu usage)
+    involves O(n) time complexity. I made heavy use of pointers (pass by reference)
+    instead of passing by value. I also learned how to create launch files in
+    VSCode to debug C programs. Additionally, my code is stored in a git
+    repository.
+
+3. Did you document all outside sources?
+    * Yes. My solution made use of Dr. Qin's source code for parsing command
+    line arguments and reading tasks from the task file. I made a note at the
+    top of the files that include his source code giving him credit.

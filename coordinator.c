@@ -63,11 +63,7 @@ int first_come_first_serve_policy(task_t *ready_array, int ready_num, task_t *fi
         finish_num++;
 
         // remove the task from the ready array
-        int i;
-        for (i = 0; i < ready_num - 1; i++)
-        {
-            ready_array[i] = ready_array[i + 1];
-        }
+        array_remove(ready_array, ready_num, 0);
         ready_num--;
 
         // no more tasks? return because this step is over
@@ -117,15 +113,19 @@ int shortest_remaining_time_first_policy(task_t *ready_array, int ready_num, tas
     // printf("READY ARRAY: \n");
     // print_ids_task_array(ready_array, ready_num);
 
+    // if no tasks are ready, return
     if (ready_num == 0)
     {
         printf("< Time %d > Idle\n", clock);
         return processes_completed;
     }
 
+    // get the shortest remaining task
     int index_of_first_task = get_index_of_task_with_shortest_remaining_time(ready_array, ready_num);
     task_t *first_task = &ready_array[index_of_first_task];
 
+    // if the task is complete, remove it from the ready_array and add it to
+    // the finish_array
     if (first_task->remaining_time <= 0)
     {
         first_task->finish_time = clock;
@@ -135,24 +135,21 @@ int shortest_remaining_time_first_policy(task_t *ready_array, int ready_num, tas
         finish_array[finish_num] = *first_task;
         finish_num++;
 
-        int i;
-        for (i = index_of_first_task; i < ready_num - 1; i++)
-        {
-            ready_array[i] = ready_array[i + 1];
-        }
-
+        array_remove(ready_array, ready_num, index_of_first_task);
         ready_num--;
 
+        // if there are no more tasks left, return
         if (ready_num <= 0)
         {
             return processes_completed;
         }
 
+        // if there still are tasks left, choose the shortest one
         index_of_first_task = get_index_of_task_with_shortest_remaining_time(ready_array, ready_num);
         first_task = &ready_array[index_of_first_task];
-        // return processes_completed;
     }
 
+    // run simulation
     if (first_task->start_time < 0)
     {
         first_task->start_time = clock;
@@ -161,11 +158,12 @@ int shortest_remaining_time_first_policy(task_t *ready_array, int ready_num, tas
 
     first_task->remaining_time -= step;
 
-    //}
-
     return processes_completed;
 }
 
+// round robin variables. time_left is the amount of time left in the
+// current process's time slice. cur_index points to the current process in
+// the ready_array passed in as a parameter to round_robin_policy
 signed int time_left = -1;
 int cur_index = 0;
 
@@ -180,18 +178,26 @@ void roll_index(int max)
 
 int round_robin_policy(task_t *ready_array, int ready_num, task_t *finish_array, int finish_num, int quantum)
 {
+
+    // initialize time_left to quantum if it is -1. This happens once only
     if (time_left < 0)
         time_left = quantum;
 
+    // if there are no tasks, return
     if (ready_num <= 0)
         return 0;
 
-    int p = 0;
+    // the number of p
+    int processesCompleted = 0;
+
+    // get the current task -- the one at the cur_index
     task_t *cur_task = &ready_array[cur_index];
 
+    // if the task is done, put it in the finish array and remove it from
+    // the ready array.
     if (cur_task->remaining_time <= 0)
     {
-        p++;
+        processesCompleted++;
 
         cur_task->finish_time = clock;
 
@@ -203,33 +209,48 @@ int round_robin_policy(task_t *ready_array, int ready_num, task_t *finish_array,
         array_remove(ready_array, ready_num, cur_index);
         ready_num--;
 
+        // if a task gets removed, the cur_index will now be pointing to
+        // the element that 2 indexes in front of the task before it got
+        // removed. Its possible that there isn't a task 2 indexes in front
+        // of it. If that happens, decrement cur_index so it gets back into
+        // the range.
         if (cur_index >= ready_num)
         {
             cur_index--;
         }
 
+        // get cur_task
         cur_task = &ready_array[cur_index];
+
+        // reset time_left to quantum - 1
         time_left = quantum - 1;
     }
     else
     {
+        // if no task needs to be removed, but the time slice is over,
+        // then move onto the next task and reset the time_left
         if (time_left <= 0)
         {
             roll_index(ready_num);
             cur_task = &ready_array[cur_index];
             time_left = quantum - 1;
         }
+
+        // however, if the time slice isn't over, then just decrement the
+        // time that the process has left
         else
         {
             time_left--;
         }
     }
 
+    // if there are no more processes left, return
     if (ready_num == 0)
     {
-        return p;
+        return processesCompleted;
     }
 
+    // simulate the task
     if (cur_task->start_time < 0)
     {
         cur_task->start_time = clock;
@@ -238,7 +259,7 @@ int round_robin_policy(task_t *ready_array, int ready_num, task_t *finish_array,
 
     cur_task->remaining_time -= step;
 
-    return p;
+    return processesCompleted;
 }
 
 void run_simulation(char *policy, task_t *task_array, int task_num, char quantum, task_t *finish_array)

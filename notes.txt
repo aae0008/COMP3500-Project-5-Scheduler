@@ -1,2 +1,0 @@
-If you want to debug, then compile with `gcc -g main.c` to preserve debug symbols.
-If you do not do this, breakpoints will not work.

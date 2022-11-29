@@ -1,7 +1,7 @@
 /**
  * COMP3500 Project 5 Scheduler
- * Xiao Qin
- * Amaar Ebrahim
+ * Created by Xiao Qin
+ * Modified by Amaar Ebrahim
  * 11/26/22
  *
  * This file contains the `get_tasks_from_file` function to read a file for
